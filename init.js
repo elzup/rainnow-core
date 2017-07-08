@@ -29,14 +29,18 @@ RPC.addHandler('Control', function(args) {
     if (args.off) {
         for (let i = start; i <= end; ++i) {
             state[i].on = false;
+            strip.setPixel(i, 0, 0, 0);
         }
     } else {
         let color = args.color;
         for (let i = start; i <= end; ++i) {
             state[i].color = color;
             state[i].on = true;
+            let s = state[i];
+            strip.setPixel(i, s.color.g, s.color.r, s.color.b);
         }
     }
+    strip.show();
     print(state);
 });
 
