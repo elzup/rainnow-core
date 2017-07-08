@@ -7,9 +7,12 @@ load('api_neopixel.js');
 
 let pin = 5, numPixels = 16, colorOrder = NeoPixel.RGB;
 let strip = NeoPixel.create(pin, numPixels, colorOrder);
+strip.clear();
+strip.show();
 
 let gen = 0;
-let isLain = true;
+let isLain = false;
+isLain = true;
 
 // Blink built-in LED every second
 Timer.set(1000 * 60 * 5 /* 5 min */, true /* repeat */, function() {
@@ -19,7 +22,7 @@ Timer.set(1000 * 60 * 5 /* 5 min */, true /* repeat */, function() {
       // print(body);
       let b = JSON.parse(body);
       let v = b.Feature[0].Property.WeatherList.Weather[1].Rainfall;
-      v = 4;
+      // v = 4;
       isLain = v >= 1;
       if (isLain) {
         strip.clear();
@@ -32,13 +35,13 @@ Timer.set(1000 * 60 * 5 /* 5 min */, true /* repeat */, function() {
 
 Timer.set(300, true, function() {
   strip.clear();
-  gen = (gen + 1) % 16;
+  gen = (gen + 1) % 8;
   if (isLain) {
     for (let i = 0; i < 16; i++) {
-      let level = (i + gen) % 8;
+      let level = ((i < 8 ? i : 8 - i) + gen & 8) % 8;
       strip.setPixel(i, 0, 0, level * 10);
-      print(i);
-      print(level * 10);
+      // print(i);
+      // print(level * 10);
     }
     strip.show();
   }
