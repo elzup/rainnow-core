@@ -1,5 +1,4 @@
 load('api_config.js');
-load('api_gpio.js');
 load('api_http.js');
 load('api_sys.js');
 load('api_timer.js');
@@ -12,7 +11,6 @@ strip.show();
 
 let gen = 0;
 let isLain = false;
-isLain = true;
 
 // Blink built-in LED every second
 Timer.set(1000 * 60 * 5 /* 5 min */, true /* repeat */, function() {
@@ -22,7 +20,6 @@ Timer.set(1000 * 60 * 5 /* 5 min */, true /* repeat */, function() {
       // print(body);
       let b = JSON.parse(body);
       let v = b.Feature[0].Property.WeatherList.Weather[1].Rainfall;
-      // v = 4;
       isLain = v >= 1;
       if (isLain) {
         strip.clear();
@@ -35,10 +32,11 @@ Timer.set(1000 * 60 * 5 /* 5 min */, true /* repeat */, function() {
 
 Timer.set(300, true, function() {
   strip.clear();
-  gen = (gen + 1) % 8;
+  // isLain = true;
   if (isLain) {
+    gen = (gen + 1) % 8;
     for (let i = 0; i < 16; i++) {
-      let level = ((i < 8 ? i : 8 - i) + gen & 8) % 8;
+      let level = ((i < 8 ? i : 8 - i % 8) + gen) % 8;
       strip.setPixel(i, 0, 0, level * 10);
       // print(i);
       // print(level * 10);
