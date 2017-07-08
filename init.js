@@ -13,22 +13,36 @@ strip.show();
 
 let state = {};
 for (let i = 0; i < 16; ++i) {
-    state[i] = { "on": true, "color": { "r": 255, "g": 255, "b": 255 } };
+    state[i] = { "on": true, "color": { "r": 39, "g": 108, "b": 146 } };
 }
+
+Timer.set(3000, false, function() {
+    for (let i = 0; i < 16; ++i) {
+        state[i].on = false;
+    }
+}, null);
+
 
 RPC.addHandler('Control', function(args) {
     let start = args.start;
     let end = args.end;
-    let color = args.color;
-    for (let i = start; i <= end; ++i) {
-        state[i].color = color;
+    if (args.off) {
+        for (let i = start; i <= end; ++i) {
+            state[i].on = false;
+        }
+    } else {
+        let color = args.color;
+        for (let i = start; i <= end; ++i) {
+            state[i].color = color;
+            state[i].on = true;
+        }
     }
-    strip.setPixel(i, 0, 0, level * 10);
+    print(state);
 });
 
 let gen = true;
 
-Timer.set(1000, true, function() {
+Timer.set(500, true, function() {
     strip.clear();
     gen = !gen;
     if (gen) {
@@ -38,11 +52,7 @@ Timer.set(1000, true, function() {
                 continue;
             }
             strip.setPixel(i, s.color.g, s.color.r, s.color.b);
-            // print(i);
-            // print(level * 10);
         }
     }
-    print(state[i].color.on);
-    print(state[i].color.g);
     strip.show();
 }, null);
